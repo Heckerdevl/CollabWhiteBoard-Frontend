@@ -25,7 +25,7 @@ Watch the app in action:
 | Frontend  | React.js, HTML5 Canvas / Fabric.js         |
 | Backend   | Node.js, Express.js, Socket.IO             |
 | Database  | MongoDB (via Mongoose)                     |
-| Hosting   | Vercel / Netlify (frontend), Render / Heroku (backend) |
+| Hosting   | Vercel(frontend), Render (backend) |
 
 ---
 
