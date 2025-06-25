@@ -1,24 +1,24 @@
-# 🧑‍🤝‍🧑 CollabWhiteBoard
+# CollabWhiteBoard
 
 A **real-time collaborative whiteboard** that allows multiple users to draw, write, and interact live — recreating the experience of a physical whiteboard in your browser.
 
 ---
-## 🎬 Demo Video
+##  Demo Video
 
 Watch the app in action:  
 [![Watch the demo](https://img.youtube.com/vi/D-nu_yf8fTM/hqdefault.jpg)](https://youtu.be/D-nu_yf8fTM)
 
-## ✨ Features
+##  Features
 
-- 🖊️ **Drawing Tools**: Pen, rectangle, color picker
-- 🔁 **Real-Time Sync**: Powered by WebSockets (Socket.IO)
-- 👥 **Multi-User Collaboration**: Create or join rooms 
-- 💾 **Save & Export**: Download your whiteboard as PNG or PDF
-- 🧹 **Canvas Controls**: Undo/Redo, clear canvas
+- **Drawing Tools**: Pen, rectangle, color picker
+- **Real-Time Sync**: Powered by WebSockets (Socket.IO)
+- **Multi-User Collaboration**: Create or join rooms 
+- **Save & Export**: Download your whiteboard as PNG or PDF
+- **Canvas Controls**: Undo/Redo, clear canvas
 
 ---
 
-## ⚙️ Tech Stack
+##  Tech Stack
 
 | Layer     | Tech                                      |
 |-----------|-------------------------------------------|
@@ -29,7 +29,7 @@ Watch the app in action:
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 CollabWhiteBoard/
 ├── backend/
@@ -51,7 +51,7 @@ CollabWhiteBoard/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Clone the Repository
 
@@ -73,7 +73,7 @@ npm start
 Frontend
 cd frontend
 npm install
-npm run dev  # If using Vite
+npm run dev  
 Environment Vairable
 VITE_BACKEND_URL=http://localhost:3000
 
