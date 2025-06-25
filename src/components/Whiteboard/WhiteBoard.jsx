@@ -1,6 +1,5 @@
-import { useEffect, useState, useLayoutEffect, useRef } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import rough from "roughjs";
-import jsPDF from "jspdf";
 
 const roughGenerator = rough.generator();
 
@@ -12,13 +11,10 @@ const WhiteBoard = ({
   tool,
   color,
   user,
-  socket
+  socket,
 }) => {
   const [isDrawing, setIsDrawing] = useState(false);
-  const history = useRef([]);
-  const isLocalChange = useRef(false);
 
-  // Setup canvas on mount
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -46,7 +42,7 @@ const WhiteBoard = ({
     }
   }, [color]);
 
-  // Redraw canvas and emit only local changes
+  // Drawing logic
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
     const ctx = ctxRef.current;
@@ -57,12 +53,13 @@ const WhiteBoard = ({
 
     elements.forEach((el) => {
       const { offsetX, offsetY, width, height, stroke } = el;
+
       if (el.type === "rect") {
         roughCanvas.draw(
           roughGenerator.rectangle(offsetX, offsetY, width, height, {
             stroke,
             strokeWidth: 2,
-            roughness: 0
+            roughness: 0,
           })
         );
       } else if (el.type === "line") {
@@ -70,43 +67,37 @@ const WhiteBoard = ({
           roughGenerator.line(offsetX, offsetY, width, height, {
             stroke,
             strokeWidth: 2,
-            roughness: 0
+            roughness: 0,
           })
         );
       } else if (el.type === "pencil") {
         roughCanvas.linearPath(el.path, {
           stroke,
           strokeWidth: 2,
-          roughness: 0
+          roughness: 0,
         });
       }
     });
 
-    if (isLocalChange.current) {
-      isLocalChange.current = false;
+    // Normalize and emit
+    const normElements = elements.map((el) => {
+      const norm = {
+        ...el,
+        offsetX: el.offsetX / canvas.width,
+        offsetY: el.offsetY / canvas.height,
+        width: el.width / canvas.width,
+        height: el.height / canvas.height,
+      };
+      if (el.type === "pencil") {
+        norm.path = el.path.map(([x, y]) => [x / canvas.width, y / canvas.height]);
+      }
+      return norm;
+    });
 
-      const normElements = elements.map((el) => {
-        const norm = {
-          ...el,
-          offsetX: el.offsetX / canvas.width,
-          offsetY: el.offsetY / canvas.height,
-          width: el.width / canvas.width,
-          height: el.height / canvas.height
-        };
-        if (el.type === "pencil") {
-          norm.path = el.path.map(([x, y]) => [
-            x / canvas.width,
-            y / canvas.height
-          ]);
-        }
-        return norm;
-      });
-
-      socket.emit("whiteboardData", { elements: normElements });
-    }
+    socket.emit("whiteboardData", { elements: normElements });
   }, [elements]);
 
-  // Receive whiteboard updates from other users
+  // Sync received data
   useEffect(() => {
     const handleWhiteboardData = (data) => {
       const canvas = canvasRef.current;
@@ -118,19 +109,15 @@ const WhiteBoard = ({
           offsetX: el.offsetX * canvas.width,
           offsetY: el.offsetY * canvas.height,
           width: el.width * canvas.width,
-          height: el.height * canvas.height
+          height: el.height * canvas.height,
         };
         if (el.type === "pencil") {
-          denorm.path = el.path.map(([x, y]) => [
-            x * canvas.width,
-            y * canvas.height
-          ]);
+          denorm.path = el.path.map(([x, y]) => [x * canvas.width, y * canvas.height]);
         }
         return denorm;
       });
 
       setElements(denormElements);
-      history.current = [...history.current, denormElements];
     };
 
     socket.on("whiteboardDataResponse", handleWhiteboardData);
@@ -141,28 +128,32 @@ const WhiteBoard = ({
     if (!user?.presenter) return;
 
     const { offsetX, offsetY } = e.nativeEvent;
-    const base = { offsetX, offsetY, stroke: color };
+    const baseElement = { offsetX, offsetY, stroke: color };
 
-    let newElement;
     if (tool === "pencil") {
-      newElement = { ...base, type: "pencil", path: [[offsetX, offsetY]] };
+      setElements((prev) => [
+        ...prev,
+        { ...baseElement, type: "pencil", path: [[offsetX, offsetY]] },
+      ]);
     } else if (tool === "line") {
-      newElement = { ...base, type: "line", width: offsetX, height: offsetY };
+      setElements((prev) => [
+        ...prev,
+        { ...baseElement, type: "line", width: offsetX, height: offsetY },
+      ]);
     } else if (tool === "rect") {
-      newElement = { ...base, type: "rect", width: 0, height: 0 };
+      setElements((prev) => [
+        ...prev,
+        { ...baseElement, type: "rect", width: 0, height: 0 },
+      ]);
     }
 
-    isLocalChange.current = true;
-    setElements((prev) => [...prev, newElement]);
     setIsDrawing(true);
   };
 
   const handleMouseMove = (e) => {
     if (!isDrawing || !user?.presenter) return;
-
     const { offsetX, offsetY } = e.nativeEvent;
 
-    isLocalChange.current = true;
     setElements((prev) =>
       prev.map((el, idx) => {
         if (idx !== prev.length - 1) return el;
@@ -175,7 +166,7 @@ const WhiteBoard = ({
           return {
             ...el,
             width: offsetX - el.offsetX,
-            height: offsetY - el.offsetY
+            height: offsetY - el.offsetY,
           };
         }
 
@@ -185,47 +176,7 @@ const WhiteBoard = ({
   };
 
   const handleMouseUp = () => {
-    if (isDrawing) {
-      history.current = [...history.current, elements];
-    }
     setIsDrawing(false);
-  };
-
-  const handleExport = (format = "png") => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const dataURL = canvas.toDataURL("image/png");
-    if (format === "png") {
-      const link = document.createElement("a");
-      link.download = "whiteboard.png";
-      link.href = dataURL;
-      link.click();
-    } else if (format === "pdf") {
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: [canvas.width, canvas.height]
-      });
-      pdf.addImage(dataURL, "PNG", 0, 0, canvas.width, canvas.height);
-      pdf.save("whiteboard.pdf");
-    }
-  };
-
-  const handleUndo = () => {
-    if (history.current.length < 2) return;
-    const newHistory = [...history.current];
-    newHistory.pop();
-    const last = newHistory[newHistory.length - 1];
-    history.current = newHistory;
-    isLocalChange.current = true;
-    setElements(last);
-  };
-
-  const handleClear = () => {
-    history.current = [[]];
-    isLocalChange.current = true;
-    setElements([]);
   };
 
   return (
@@ -233,39 +184,8 @@ const WhiteBoard = ({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      className="relative w-full h-screen overflow-hidden border border-gray-800"
+      className="relative w-full h-full overflow-hidden border border-gray-800"
     >
-      {/* Controls */}
-      <div className="absolute top-4 left-4 z-50 flex gap-2">
-        <button
-          onClick={handleUndo}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Undo
-        </button>
-        <button
-          onClick={handleClear}
-          className="px-4 py-2 bg-red-600 text-white rounded"
-        >
-          Clear
-        </button>
-      </div>
-
-      <div className="absolute top-4 right-4 z-50 flex gap-2">
-        <button
-          onClick={() => handleExport("png")}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Export PNG
-        </button>
-        <button
-          onClick={() => handleExport("pdf")}
-          className="px-4 py-2 bg-green-600 text-white rounded"
-        >
-          Export PDF
-        </button>
-      </div>
-
       <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   );
