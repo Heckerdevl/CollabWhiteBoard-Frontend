@@ -1,12 +1,83 @@
-# React + Vite
+# 🧑‍🤝‍🧑 CollabWhiteBoard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A **real-time collaborative whiteboard** that allows multiple users to draw, write, and interact live — recreating the experience of a physical whiteboard in your browser.
 
-Currently, two official plugins are available:
+---
+## 🎬 Demo Video
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Watch the app in action:  
+[![Watch the demo](https://img.youtube.com/vi/D-nu_yf8fTM/hqdefault.jpg)](https://youtu.be/D-nu_yf8fTM)
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 🖊️ **Drawing Tools**: Pen, rectangle, color picker
+- 🔁 **Real-Time Sync**: Powered by WebSockets (Socket.IO)
+- 👥 **Multi-User Collaboration**: Create or join rooms 
+- 💾 **Save & Export**: Download your whiteboard as PNG or PDF
+- 🧹 **Canvas Controls**: Undo/Redo, clear canvas
+
+---
+
+## ⚙️ Tech Stack
+
+| Layer     | Tech                                      |
+|-----------|-------------------------------------------|
+| Frontend  | React.js, HTML5 Canvas / Fabric.js         |
+| Backend   | Node.js, Express.js, Socket.IO             |
+| Database  | MongoDB (via Mongoose)                     |
+| Hosting   | Vercel / Netlify (frontend), Render / Heroku (backend) |
+
+---
+
+## 📁 Project Structure
+
+CollabWhiteBoard/
+├── backend/
+│ ├── models/ # User model (Mongoose)
+│ ├── utils/ # User utility functions
+│ ├── server.js # Express + Socket.IO server
+│ └── .env # Backend environment variables
+│
+├── frontend/
+│ ├── src/
+│ │ ├── components/
+│ │ │ ├── Forms/ # Room create/join forms
+│ │ │ └── Whiteboard/ # Drawing & canvas logic
+│ │ ├── pages/ # Room page logic
+│ │ ├── App.jsx
+│ │ └── main.jsx
+│ └── .env # Frontend environment variables
+
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Heckerdevl/CollabWhiteBoard-Frontend.git
+cd CollabWhiteBoard
+
+
+Backend
+cd backend
+npm install
+
+Environment Vairable
+PORT=3000
+MONGO_URI=mongodb+srv://codinggeeks27:dVwMr1TlrNgM4yjn@cluster0.o5btegm.mongodb.net/CollabWhiteBoard
+npm start
+
+
+Frontend
+cd frontend
+npm install
+npm run dev  # If using Vite
+Environment Vairable
+VITE_BACKEND_URL=http://localhost:3000
+
+
+
+
+
