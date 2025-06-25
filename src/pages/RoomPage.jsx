@@ -6,7 +6,7 @@ const RoomPage = ({ user, socket, users }) => {
   const ctxRef = useRef(null);
 
   const [tool, setTool] = useState("pencil");
-  const [color, setColor] = useState("#000000"); 
+  const [color, setColor] = useState("#000000");
   const [elements, setElements] = useState([]);
   const [history, setHistory] = useState([]);
   const [openedUserTab, setOpenedUserTab] = useState(false);
@@ -18,11 +18,6 @@ const RoomPage = ({ user, socket, users }) => {
   }, []);
 
   const handleClearCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     setElements([]);
     setHistory([]);
   };
@@ -43,7 +38,6 @@ const RoomPage = ({ user, socket, users }) => {
 
   return (
     <div className="relative w-full h-full bg-gray-100">
-      {/* User Side Panel */}
       <button
         type="button"
         onClick={() => setOpenedUserTab(true)}
@@ -72,16 +66,13 @@ const RoomPage = ({ user, socket, users }) => {
         </div>
       )}
 
-      {/* Page Title */}
       <h1 className="text-center text-2xl font-bold text-blue-700 py-4">
         Whiteboard Sharing App{" "}
         <span className="text-sm text-gray-700">[Users Online: {users.length}]</span>
       </h1>
 
-      {/* Tools Section */}
       {user?.presenter && (
         <div className="flex flex-wrap justify-center items-center gap-4 px-6 mb-4">
-          {/* Tool Selector */}
           <div className="flex gap-4 items-center">
             <label className="flex items-center gap-1">
               <input
@@ -115,7 +106,6 @@ const RoomPage = ({ user, socket, users }) => {
             </label>
           </div>
 
-          {/* Color Picker */}
           <div className="flex items-center gap-2">
             <label htmlFor="color">Color:</label>
             <input
@@ -127,7 +117,6 @@ const RoomPage = ({ user, socket, users }) => {
             />
           </div>
 
-          {/* Undo / Redo / Clear */}
           <div className="flex gap-2">
             <button
               className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
@@ -137,7 +126,7 @@ const RoomPage = ({ user, socket, users }) => {
               Undo
             </button>
             <button
-              className="px-4 py-2 border border-blue-600 text-blue-600 rounded disabled:opacity-50"
+              className="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50"
               disabled={history.length === 0}
               onClick={redo}
             >
@@ -153,7 +142,6 @@ const RoomPage = ({ user, socket, users }) => {
         </div>
       )}
 
-      {/* Canvas Area */}
       <div className="mx-auto max-w-screen-xl mt-2 h-[calc(100vh-200px)] px-4">
         <WhiteBoard
           canvasRef={canvasRef}
