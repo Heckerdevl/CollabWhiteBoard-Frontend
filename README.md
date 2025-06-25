@@ -8,6 +8,11 @@ A **real-time collaborative whiteboard** that allows multiple users to draw, wri
 Watch the app in action:  
 [![Watch the demo](https://img.youtube.com/vi/D-nu_yf8fTM/hqdefault.jpg)](https://youtu.be/D-nu_yf8fTM)
 
+## Deployment Links
+
+- **Frontend**: [collab-white-board-frontend.vercel.app](https://collab-white-board-frontend.vercel.app)
+- **Backend**: [collabwhiteboard-backend01.onrender.com](https://collabwhiteboard-backend01.onrender.com)
+
 ##  Features
 
 - **Drawing Tools**: Pen, rectangle, color picker
