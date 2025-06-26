@@ -69,11 +69,11 @@ cd CollabWhiteBoard
 Backend
 cd backend
 npm install
+npm start
 
 Environment Vairable
 PORT=3000
 MONGO_URI=mongodb+srv://codinggeeks27:dVwMr1TlrNgM4yjn@cluster0.o5btegm.mongodb.net/CollabWhiteBoard
-npm start
 
 
 Frontend
@@ -81,7 +81,7 @@ cd frontend
 npm install
 npm run dev  
 Environment Vairable
-VITE_BACKEND_URL=http://localhost:3000
+VITE_SERVER_URL=wss://collabwhiteboard-backend01.onrender.com
 
 
 
