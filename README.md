@@ -28,7 +28,7 @@ Watch the app in action:
 
 | Layer     | Tech                                      |
 |-----------|-------------------------------------------|
-| Frontend  | React.js, HTML5 Canvas / Fabric.js         |
+| Frontend  | React.js, HTML5 Canvas        |
 | Backend   | Node.js, Express.js, Socket.IO             |
 | Database  | MongoDB (via Mongoose)                     |
 | Hosting   | Vercel(frontend), Render (backend) |
